@@ -1,0 +1,53 @@
+
+         'FCLARKE.FILE1059.PDS' - Directory
+
+
+           Usage or
+ Member    Caller      Description
+ ========  =========   =====================================
+
+ $$$#DATE  data        CBT library log file
+
+ #INDEX    data        (*) This member
+
+ @FIL1059  data        Inventory
+
+ @OVRVIEW  text        Introductory remarks
+
+ ADDROOT   exec        (*) TBCOPY Clone for FAMTREE
+
+ BRTHDAYS  exec        (*) Collect birthdays and anniversaries from FAMTREE
+
+ DFLTTLIB  fragment    How to set up a default ISPTLIB
+
+ FAMTREE   exec        (*) Build/maintain a family genealogy
+
+ FCCMDUPD  exec        Insert a new command onto TMPCMDS
+
+ FLTTBL    exec        Flatten any table (see RSTTBL)
+
+ FTIMPORT  exec        (*) Repro lines from one FAMTREE table to another
+
+ GENFT     exec        One-time-only setup FT in TBLMSTR
+
+ HEADSUP   exec        (*) Report on upcoming events in BRTHDAYS.LIST
+
+ LA        exec        LISTA ST
+
+ ORDINAL   subr        Calc ordinal of number (1st 2nd 3rd 4th...)
+
+ REORDER   exec        (*) Rearrange out-of-order FT-table lines (FAMTREE)
+
+ RSTTBL    exec        Restore a table flattened by FLTTBL
+
+ SHUFFLE   macro       (*) Macro/Subroutine of REORDER/FAMTREE
+
+ STRSORT   exec        Sort a string of words
+
+ TBCOPY    exec        Copy a table using AAMSTR
+
+ TBLGEN    exec        Build a table from AAMSTR specs
+
+ TBLMSTR   exec        Maintain AAMSTR table
+
+ TRAPOUT   exec        Trap trace output to DASD

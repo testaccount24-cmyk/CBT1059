@@ -1,0 +1,63 @@
+/* REXX    SHUFFLE    is a subroutine of FAMTREE and is intended to be
+                  used exclusively on a FLTTBL-copy of an ISPF FT-type
+                  table as defined in table AAMSTR.  It is called by
+                  REORDER after REORDER generates a flattened copy of
+                  the actual table.  On return from SHUFFLE, REORDER
+                  recreates the original table from the corrected flat
+                  copy.
+                      Input to SHUFFLE are three datapoints in the
+                  SHARED pool:  BASE, INSEQ, and OUTSEQ.  SHUFFLE
+                  operates on these parameters as follows:
+.                   1.  the keys in the input dataset formed by
+.                       BASE || Substr( INSEQ,idx,1 ) are changed to
+.                       BASE || idx
+.                   2   the changed keys are then changed AGAIN to
+.                       BASE || Substr( OUTSEQ,idx,1 ) where 'idx' is
+.                       the position of this character in INSEQ.
+.                     That is: given an INSEQ of BCDE and an OUTSEQ of DEBC,
+.                 the '1'-set (B) will be changed to 'D',
+.                 the '2'-set (C) will be changed to 'E',
+.                 the '3'-set (D) will be changed to 'B',
+.                 the '4'-set (E) will be changed to 'C'.
+.                     Given an INSEQ of BCE and an OUTSEQ of EBC,
+.                 the '1'-set (B) will be changed to 'E',
+.                 the '2'-set (C) will be changed to 'B',
+.                 the '3'-set (E) will be changed to 'C',
+
+*/
+address ISREDIT
+"MACRO (opts)"
+if rc = 20 then do                     /* ISREDIT not available      */
+   address TSO
+   parse source  .  .  exec_name .
+   ex_nam = Left(exec_name,8)          /* predictable size           */
+   helpmsg = ex_nam "is an EDIT macro"
+   say helpmsg
+   end
+upper opts
+parse var opts "TRACE" tv .
+parse value tv "N" with tv .
+rc = Trace("O") ; rc = Trace(tv)
+
+address ISPEXEC "VGET ( BASE, INSEQ, OUTSEQ ) SHARED"
+nums = "123456789"
+innums = Left( nums, Length( inseq ))
+writeseq = Translate( outseq, innums, inseq )
+
+"PRESERVE ON"
+"X ALL"
+"F" base "ALL PREFIX"
+do idx = 1 to Length( inseq )
+   fromid   = base || Substr( inseq, idx, 1 )
+   toid     = base || idx
+   "C ALL NX" fromid  toid
+end                                    /* idx                        */
+/* All blocks have been renamed to something safe                    */
+do idx = 1 to Length( inseq )
+   fromid   = base || Substr( writeseq, idx, 1 )
+   toid     = base || Substr( inseq, idx, 1 )
+   "C ALL NX" fromid  toid
+end                                    /* idx                        */
+/* All blocks have been resequenced                                  */
+
+exit                                   /*@ SHUFFLE                   */

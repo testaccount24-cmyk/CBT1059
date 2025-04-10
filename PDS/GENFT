@@ -1,0 +1,22 @@
+/* REXX       GENFT       ....
+*/ arg argline                         /* pro-forma quick-start      */
+address TSO
+arg parms "((" opts
+opts = Strip(opts,"T",")")
+parse var opts "TRACE"  tv  .
+parse value tv "N"  with  tv .
+rc = Trace("O"); rc = Trace(tv)
+
+   "NEWSTACK"
+   queue "AATBLID FT "
+   queue "AATBLNM * "
+   queue "AAKEYS  FTSEQ "
+   queue "AANAMES FTSEQL FTNAME FTBIRTH FTDEATH FTSPOUSE FTWEDDT",
+                 "FTTEXT FTSEQ2 FTSPBD FTSPDD FTEMAIL FTSPEML "
+   queue "AADESC  Family Tree Data Collection"
+   queue "AASORT  FTSEQ,C,A "
+   queue "AALIBR  *"
+   "TBLMSTR (( NEWROW"  opts
+   "DELSTACK"
+
+exit                                   /*@ GENFT                     */

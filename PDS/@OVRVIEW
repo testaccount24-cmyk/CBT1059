@@ -1,0 +1,56 @@
+/*
+ FAMTREE helps you build a genealogical database that can later be
+     converted to HTML.  The database can be constructed in parts and
+     later joined to form a coherent whole.  More than one 'family'
+     can be defined and there are routines that can splice parts of
+     one family with another.  It builds an ISPF table defined as
+
+.     KEYS(FTSEQ)
+.     NAMES(FTSEQL FTNAME FTBIRTH FTDEATH FTSPOUSE FTWEDDT FTTEXT,
+.           FTSEQ2 FTSPBD FTSPDD FTEMAIL FTSPEML )
+
+     and named for the family whose data it contains.  Thus data for
+     multiple families may be kept on individual tables.  Since its
+     use involves ISPF tables, an ISPEXEC environment is required.
+     Subroutines in active use are:
+
+       FTIMPORT -- used to replicate data from family A to family B
+
+       REORDER  -- (operates on a FLTTBL-copy) resequences rows that
+            are out of order.
+
+       SHUFFLE  -- (operates on a FLTTBL-copy) is a subroutine of
+            REORDER and actually does the resequencing.  On return
+            from SHUFFLE, REORDER recreates the original table as
+            corrected by SHUFFLE.
+
+       BRTHDAYS -- collects all birthday and anniversay dates with
+            names, and creates a sorted list for later processing.
+
+       HEADSUP  -- reports on upcoming dates in the birthday and
+            anniversary list.
+
+       ORDINAL  -- adds the ordinal 'tail' to numbers, e.g.: 'th' for
+            37th, or 'st' for 21st.
+
+
+ PREPARATION:
+
+ Load the contents of this library to an appropriate library available
+     to all who should have access to FAMTREE.
+
+ Prior to running FAMTREE, if there presently does not exist a table
+     called AAMSTR in your ISPTLIB concatenation, issue the following
+     command from within ISPF:
+          ===> tso %tblmstr (( install
+     With an AAMSTR table in place, invoke GENFT to establish the FT
+     table type on the AAMSTR table.  GENFT should be discarded after
+     successful execution.
+
+ The first use of FAMTREE will use the parameters stored on the AAMSTR
+     table to generate a new FT-type table for use by FAMTREE.
+     Each time FAMTREE is called with a table name(family name) that
+     does not presently exist, a new table for that family will be
+     generated.
+
+*/

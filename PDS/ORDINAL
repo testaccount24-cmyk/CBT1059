@@ -1,0 +1,67 @@
+/* REXX       ORDINAL     For the value tendered, calculate the
+                          ordinal based on the rightmost two digits:
+                          1=st, 2=nd, 3=rd, all others=th, except in
+                          the range 11-13 where everything is th.
+
+             Syntax :  ord = ORDINAL( num )
+
+*/ arg argline                         /* pro-forma quick-start      */
+address TSO
+sw. = 0
+sw.0nested   = sysvar("SYSNEST") = "YES"
+arg parms "((" opts
+opts = Strip(opts,"T",")")
+parse var opts "TRACE"  tv  .
+parse value tv "N"  with  tv .
+rc = Trace("O"); rc = Trace(tv)
+
+parse var parms  gap .
+if gap = '' | gap = ? then call HELP
+parse value "th    st     nd     rd "  with,
+             ord.  ord.1  ord.2  ord.3  .
+pta     = gap//100                     /* rightmost 2 digits         */
+ptb     = pta%10                       /* 10s digit                  */
+if ptb  = 1  then pt = 0               /* th                         */
+   else  pt = pta//10                  /* units digit                */
+
+if sw.0nested then return( ord.pt )
+              else say gap''ord.pt
+exit                                   /*@ ORDINAL                   */
+/*
+.  ----------------------------------------------------------------- */
+HELP:                                  /*@                           */
+address TSO;"CLEAR"
+   parse source  sys_id  how_invokt  exec_name  DD_nm  DS_nm,
+                     as_invokt  cmd_env  addr_spc  usr_tokn
+ex_nam = Left(exec_name,8)             /* predictable size           */
+
+say "                                                                          "
+say "  "ex_nam"      returns a number and its ordinal suffix: 1='st', 2='nd',  "
+say "                3='rd', all others 'th' except in the range 11-13 where   "
+say "                everything is 'th'.  If called by another program, only   "
+say "                the suffix is returned.                                   "
+say "                                                                          "
+say "  Syntax:   "ex_nam"  number                                              "
+say "                                                                          "
+say "            number    is any whole number.  No editing is done, so sending"
+say "                      a fractional decimal number will give unpredictable "
+say "                      results.                                            "
+say "                                                                          "
+"NEWSTACK"; pull ; "CLEAR" ; "DELSTACK"
+say "   Debugging tools provided include:                                      "
+say "                                                                          "
+say "        TRACE tv: will use value following TRACE to place the execution   "
+say "                  into REXX TRACE Mode.                                   "
+say "                                                                          "
+say "                                                                          "
+say "   Debugging tools can be accessed in the following manner:               "
+say "                                                                          "
+say "        TSO "ex_nam"  parameters     ((  debug-options                    "
+say "                                                                          "
+say "   For example:                                                           "
+say "                                                                          "
+say "        TSO "ex_nam"  (( trace ?r                                         "
+
+if sysvar("SYSISPF") = "ACTIVE" then,
+   address ISPEXEC "CONTROL DISPLAY REFRESH"
+exit                                   /*@ HELP                      */
